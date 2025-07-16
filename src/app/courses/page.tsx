@@ -3,18 +3,29 @@ import ActionButtons from "@/components/actionButton";
 import PageWrapper from "@/components/pageWrapper";
 import apiEndpoints from "@/config/apiEndPoint";
 import type { Courses } from "@/types";
-import { Table } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
+import { Input, Table } from "antd";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import debounce from "lodash/debounce";
+import { useEffect, useMemo, useState } from "react";
 
 const Courses = () => {
-  const [data, setDataSource] = useState<Courses[]>([]);
+  const [data, setData] = useState<Courses[]>([]);
+  const [dataSource, setDataSource] = useState<Courses[]>([]);
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return dataSource.slice(start, start + pageSize);
+  }, [dataSource, pageSize, currentPage]);
 
   const fetchCourses = async () => {
     try {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.course.getCourses
       );
+      setData(response.data);
       setDataSource(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);
@@ -72,14 +83,52 @@ const Courses = () => {
 
   return (
     <PageWrapper>
+      {/* <div className="pt-12"></div> */}
       <h1 className="text-2xl font-bold">Courses</h1>
       <p className="my-4">This is the courses page.</p>
+      <div className="flex gap-4 mb-4">
+        <Input.Search
+          onChange={debounce((e) => {
+            const searchValue = e.target.value.toLowerCase();
+
+            if (!searchValue) {
+              setDataSource(data);
+              return;
+            }
+
+            const filteredData = data.filter(
+              (course) =>
+                course.title.toLowerCase().includes(searchValue) ||
+                course.description.toLowerCase().includes(searchValue)
+            );
+            setDataSource(filteredData);
+          }, 300)}
+          prefix={<SearchOutlined />}
+          placeholder="Search something here..."
+        />
+      </div>
       <Table
         rowKey="_id"
         bordered
-        className="w-full"
+        className="w-full min-h-[400px]"
+        tableLayout="fixed"
+        scroll={{
+          x: "max-content",
+          y: 400,
+        }}
         size="middle"
-        dataSource={data}
+        pagination={{
+          showSizeChanger: true,
+          total: dataSource.length,
+          pageSizeOptions: ["10", "20", "30", "40"],
+          // showTotal: (total) => `Total ${total} items`,
+          onChange: (page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          },
+          className: "w-full flex gap-1",
+        }}
+        dataSource={paginatedData}
         columns={columns}
         rowClassName={(record) =>
           record.status === "Inactive" ? "bg-red-100" : ""

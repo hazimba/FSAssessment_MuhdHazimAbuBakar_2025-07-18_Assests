@@ -6,6 +6,8 @@ export interface Courses {
   price: {
     $numberDecimal: string;
   };
+  instructor_id: string;
+  image_url?: string;
 }
 export interface Users {
   _id: string;

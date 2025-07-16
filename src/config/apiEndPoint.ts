@@ -6,6 +6,7 @@ const apiEndpoints = {
     restoreCourse: "/restoreCourse",
     createCourse: "/createCourse",
     updateCourse: "/updateCourse",
+    getCourseById: "/getCourseById",
   },
   user: {
     getUsers: "/getUsers",

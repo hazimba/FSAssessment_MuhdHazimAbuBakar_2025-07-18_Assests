@@ -15,7 +15,6 @@ const Courses = () => {
       const response = await axios.get(
         process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.course.getCourses
       );
-      console.log(response.data);
       setDataSource(response.data);
     } catch (error) {
       console.error("Error fetching courses:", error);

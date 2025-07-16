@@ -50,6 +50,7 @@ const Courses = () => {
       title: "Price",
       dataIndex: "price",
       key: "price",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (price: Courses | any) => {
         const value = price?.$numberDecimal;
         return Number(value).toFixed(2);
@@ -59,6 +60,7 @@ const Courses = () => {
       title: "Actions",
       key: "actions",
       dataIndex: "actions",
+      // @ts-expect-error: Type 'Courses' is not assignable to type 'string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactNodeArray | ReactPortal | null | undefined'.
       render: (_, record: Courses) => (
         <ActionButtons
           record={record}

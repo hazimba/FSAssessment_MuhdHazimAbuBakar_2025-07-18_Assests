@@ -26,6 +26,7 @@ const ActionButtons = ({
   const handleDelete = async (id: string) => {
     try {
       const response = await axios.delete(
+        // @ts-expect-error: endPoint.deleteCourse may not exist on all endpoint objects
         `${process.env.NEXT_PUBLIC_MONGO_DB_API}${endPoint.deleteCourse}/${id}`
       );
       if (!response || !response.data) {
@@ -42,6 +43,7 @@ const ActionButtons = ({
   const handleUndelete = async (id: string) => {
     try {
       const response = await axios.patch(
+        // @ts-expect-error: endPoint.restoreCourse may not exist on all endpoint objects
         `${process.env.NEXT_PUBLIC_MONGO_DB_API}${endPoint.restoreCourse}/${id}`
       );
       if (!response || !response.data) {

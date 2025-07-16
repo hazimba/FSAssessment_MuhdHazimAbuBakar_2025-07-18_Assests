@@ -4,7 +4,7 @@ import PageWrapper from "@/components/pageWrapper";
 import apiEndpoints from "@/config/apiEndPoint";
 import type { Courses } from "@/types";
 import { SearchOutlined } from "@ant-design/icons";
-import { Input, Table } from "antd";
+import { Input, Select, Table } from "antd";
 import axios from "axios";
 import debounce from "lodash/debounce";
 import { useEffect, useMemo, useState } from "react";
@@ -14,6 +14,11 @@ const Courses = () => {
   const [dataSource, setDataSource] = useState<Courses[]>([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
+  const [selectedInstructor, setSelectedInstructor] = useState<
+    string | undefined
+  >();
+  const [searchText, setSearchText] = useState<string>("");
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -67,6 +72,11 @@ const Courses = () => {
       },
     },
     {
+      title: "Instructor",
+      dataIndex: "instructor_id",
+      key: "instructor_id",
+    },
+    {
       title: "Actions",
       key: "actions",
       dataIndex: "actions",
@@ -81,31 +91,84 @@ const Courses = () => {
     },
   ];
 
+  const instuctorOptions = [
+    { value: "664f1717c31e4c87fae88273", label: "Instructor 1" },
+    { value: "664f1701ebd5c8b7f3ab71f4", label: "Instructor 2" },
+  ];
+
+  const statusOptions = [
+    { value: "Active", label: "Active" },
+    { value: "Inactive", label: "Inactive" },
+  ];
+
+  const applyFilters = (
+    status: string | undefined,
+    instructorId: string | undefined,
+    search: string
+  ) => {
+    let filtered = [...data];
+
+    if (status) {
+      filtered = filtered.filter((item) => item.status === status);
+    }
+
+    if (instructorId) {
+      filtered = filtered.filter((item) => item.instructor_id === instructorId);
+    }
+
+    if (search) {
+      filtered = filtered.filter(
+        (course) =>
+          course.title.toLowerCase().includes(search) ||
+          course.description.toLowerCase().includes(search)
+      );
+    }
+
+    setDataSource(filtered);
+  };
+
   return (
     <PageWrapper>
       {/* <div className="pt-12"></div> */}
       <h1 className="text-2xl font-bold">Courses</h1>
       <p className="my-4">This is the courses page.</p>
-      <div className="flex gap-4 mb-4">
-        <Input.Search
-          onChange={debounce((e) => {
-            const searchValue = e.target.value.toLowerCase();
-
-            if (!searchValue) {
-              setDataSource(data);
-              return;
-            }
-
-            const filteredData = data.filter(
-              (course) =>
-                course.title.toLowerCase().includes(searchValue) ||
-                course.description.toLowerCase().includes(searchValue)
-            );
-            setDataSource(filteredData);
-          }, 300)}
-          prefix={<SearchOutlined />}
-          placeholder="Search something here..."
-        />
+      <div className="flex gap-4">
+        <div className="flex gap-4 mb-4">
+          <Input.Search
+            onChange={debounce((e) => {
+              const value = e.target.value.toLowerCase();
+              setSearchText(value);
+              applyFilters(selectedStatus, selectedInstructor, value);
+              setCurrentPage(1);
+            }, 300)}
+            prefix={<SearchOutlined />}
+            placeholder="Title Filter..."
+          />
+        </div>
+        <div className="flex gap-4 mb-4">
+          <Select
+            options={instuctorOptions}
+            onChange={(value) => {
+              setSelectedInstructor(value);
+              applyFilters(selectedStatus, value, searchText);
+              setCurrentPage(1);
+            }}
+            allowClear
+            placeholder="Instructor Filter..."
+          />
+        </div>
+        <div className="flex gap-4 mb-4">
+          <Select
+            options={statusOptions}
+            onChange={(value) => {
+              setSelectedStatus(value);
+              applyFilters(value, selectedInstructor, searchText);
+              setCurrentPage(1);
+            }}
+            allowClear
+            placeholder="Status Filter..."
+          />
+        </div>
       </div>
       <Table
         rowKey="_id"
@@ -121,7 +184,7 @@ const Courses = () => {
           showSizeChanger: true,
           total: dataSource.length,
           pageSizeOptions: ["10", "20", "30", "40"],
-          // showTotal: (total) => `Total ${total} items`,
+          showTotal: (total) => `Total ${total} items`,
           onChange: (page, size) => {
             setCurrentPage(page);
             setPageSize(size);
@@ -133,6 +196,16 @@ const Courses = () => {
         rowClassName={(record) =>
           record.status === "Inactive" ? "bg-red-100" : ""
         }
+        onRow={(record) => ({
+          onClick: () => {
+            window.location.href = `/courses/view/${record._id}`;
+          },
+        })}
+        expandable={{
+          expandedRowRender: (record) => (
+            <p className="m-0">{record.image_url}</p>
+          ),
+        }}
       />
     </PageWrapper>
   );

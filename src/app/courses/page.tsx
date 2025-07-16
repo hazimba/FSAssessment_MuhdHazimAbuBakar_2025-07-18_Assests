@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Table } from "antd";
 import apiEndpoints from "@/config/apiEndPoint";
 import PageWrapper from "@/components/pageWrapper";
+import { Courses } from "@/types";
 
 const Courses = () => {
   const [data, setDataSource] = useState<any>([]);
@@ -19,9 +20,21 @@ const Courses = () => {
       console.error("Error fetching courses:", error);
     }
   };
+
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  const ActionButtons = ({ record }: { record: Courses }) => {
+    console.log("Record:", record);
+
+    return (
+      <div className="flex space-x-2">
+        <button className="text-blue-500 hover:underline">Edit</button>
+        <button className="text-red-500 hover:underline">Delete</button>
+      </div>
+    );
+  };
 
   const columns = [
     {
@@ -48,6 +61,11 @@ const Courses = () => {
         return Number(value).toFixed(2);
       },
     },
+    {
+      title: "Actions",
+      key: "actions",
+      render: (_, record: Courses) => <ActionButtons record={record} />,
+    },
   ];
 
   return (
@@ -57,6 +75,7 @@ const Courses = () => {
       <Table
         rowKey="_id"
         bordered
+        className="w-full"
         size="middle"
         dataSource={data}
         columns={columns}

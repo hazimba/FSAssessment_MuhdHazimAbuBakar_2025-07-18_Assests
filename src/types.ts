@@ -27,7 +27,7 @@ export enum UserRole {
   INSTRUCTOR = "Instructor",
 }
 
-export enum CourseStatus {
+export enum Status {
   ACTIVE = "Active",
   INACTIVE = "Inactive",
 }

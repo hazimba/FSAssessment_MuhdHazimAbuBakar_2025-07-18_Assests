@@ -2,15 +2,11 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, InputNumber, Select, Space } from "antd";
 import { fetchEntities } from "../services/fetchEntities";
-import { Users } from "@/types";
-
-const { Option } = Select;
+import { Courses, UserRole, Users } from "@/types";
 
 interface CourseFormProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit: (values: any) => void;
+  initialValues?: Courses;
+  onSubmit: (values: Courses) => void;
   loading?: boolean;
 }
 
@@ -25,7 +21,7 @@ const CourseForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
     fetchEntities<Users>({
       setfetchEntities: (data) => {
         const roleInstructor = data
-          .filter((u) => u.role === "Instructor")
+          .filter((u) => u.role === UserRole.INSTRUCTOR)
           .map((u) => ({
             value: u._id,
             label: u.name,
@@ -73,7 +69,7 @@ const CourseForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
 
       <Form.Item
         name="instructor_id"
-        label="Instructor"
+        label={`${UserRole.INSTRUCTOR}`}
         rules={[{ required: true, message: "Please select an instructor" }]}
       >
         <Select

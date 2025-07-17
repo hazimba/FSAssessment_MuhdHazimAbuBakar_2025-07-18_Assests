@@ -1,7 +1,7 @@
 "use client";
 import UserForm from "@/app/users/userForm";
 import apiEndpoints from "@/config/apiEndPoint";
-import { Courses, Users } from "@/types";
+import { Courses, Status, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
 import { usePathname } from "next/navigation";
@@ -152,11 +152,11 @@ const ActionButtons = ({
       </Modal>
       <Popconfirm
         title={`Are you sure you want to ${
-          record.status === "Active" ? "delete" : "undelete"
+          record.status === Status.ACTIVE ? "delete" : "undelete"
         } this ${name}?`}
         onConfirm={(e) => {
           e?.stopPropagation();
-          if (record._id && record.status === "Active") {
+          if (record._id && record.status === Status.ACTIVE) {
             handleDelete(record._id);
           } else if (record._id && record.status === "Inactive") {
             handleUndelete(record._id);
@@ -167,7 +167,7 @@ const ActionButtons = ({
         cancelText="No"
       >
         <Button color="default" danger variant="link">
-          {record.status === "Active" ? "Delete" : "Undelete"}
+          {record.status === Status.ACTIVE ? "Delete" : "Undelete"}
         </Button>
       </Popconfirm>
     </div>

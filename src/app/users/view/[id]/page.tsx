@@ -1,11 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
 import PageWrapper from "@/components/pageWrapper";
-import axios from "axios";
 import apiEndpoints from "@/config/apiEndPoint";
-import { Image, Tag } from "antd";
 import { Courses, Users } from "@/types";
+import { Tag } from "antd";
+import axios from "axios";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const ViewUser = () => {
   const { id } = useParams();
@@ -46,6 +46,7 @@ const ViewUser = () => {
     };
     fetchUser();
   }, [id]);
+
   if (!userValue) {
     return <PageWrapper>Loading...</PageWrapper>;
   }
@@ -59,7 +60,7 @@ const ViewUser = () => {
       .filter(Boolean);
 
     return (
-      <div className="flex flex-wrap justify-end gap-1">
+      <div className="flex flex-wrap gap-1">
         {enrolledTitles.length > 0 ? (
           enrolledTitles.map((title, idx) => (
             <Tag key={idx} color="blue">
@@ -76,30 +77,24 @@ const ViewUser = () => {
   const render = () => {
     return (
       <div className="flex flex-col items-center justify-center w-screen">
-        <Image
-          width={400}
-          className="rounded-2xl shadow-lg"
-          alt="Course Image"
-          src="https://cdn.britannica.com/39/226539-050-D21D7721/Portrait-of-a-cat-with-whiskers-visible.jpg"
-        />
-        <div className="flex flex-col items-start mt-6 text-sm w-[400px]">
-          <div className="flex w-full justify-between">
-            <span className="font-semibold">NAME</span>
-            <span>{userValue.name}</span>
-          </div>
-          <div className="flex w-full justify-between">
-            <span className="font-semibold">ROLE</span>
-            <span>{userValue.role}</span>
-          </div>
-          <div className="flex w-full justify-between">
-            <span className="font-semibold">STATUS</span>
-            <span>{userValue.status}</span>
-          </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-2 w-[400px] mt-6 text-sm">
+          <div className="font-semibold text-right">NAME</div>
+          <div>{userValue.name}</div>
+
+          <div className="font-semibold text-right">ROLE</div>
+          <div>{userValue.role}</div>
+
+          <div className="font-semibold text-right">STATUS</div>
+          <div>{userValue.status}</div>
+
+          <div className="font-semibold text-right">IDENTIFICATION</div>
+          <div>{userValue.identification}</div>
+
           {userValue.enrollment && (
-            <div className="flex w-full justify-between">
-              <span className="font-semibold">ENROLLMENT</span>
-              <span className="text-right w-[300px]">{renderCourses()}</span>
-            </div>
+            <>
+              <div className="font-semibold text-right">ENROLLMENT</div>
+              <div className="flex flex-wrap gap-1">{renderCourses()}</div>
+            </>
           )}
         </div>
       </div>

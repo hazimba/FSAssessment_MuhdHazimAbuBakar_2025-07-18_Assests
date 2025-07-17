@@ -1,48 +1,29 @@
 "use client";
+import { fetchCourses } from "@/app/services/fetchCourses";
 import ActionButtons from "@/components/actionButton";
 import PageWrapper from "@/components/pageWrapper";
-import apiEndpoints from "@/config/apiEndPoint";
 import type { Courses } from "@/types";
-import { SearchOutlined } from "@ant-design/icons";
-import { Input, Select, Table } from "antd";
-import axios from "axios";
-import debounce from "lodash/debounce";
+import { Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
+import FilterBar from "./filterBar";
 
 const Courses = () => {
-  const [data, setData] = useState<Courses[]>([]);
-  const [dataSource, setDataSource] = useState<Courses[]>([]);
+  const [data, setFetchCourses] = useState<Courses[]>([]);
+  const [dataFilter, setDataFilter] = useState<Courses[]>([]);
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
-  const [selectedInstructor, setSelectedInstructor] = useState<
-    string | undefined
-  >();
-  const [searchText, setSearchText] = useState<string>("");
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
-    return dataSource.slice(start, start + pageSize);
-  }, [dataSource, pageSize, currentPage]);
-
-  const fetchCourses = async () => {
-    try {
-      const response = await axios.get(
-        process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.course.getCourses
-      );
-      setData(response.data);
-      setDataSource(response.data);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-    }
-  };
+    return dataFilter.slice(start, start + pageSize);
+  }, [dataFilter, pageSize, currentPage]);
 
   useEffect(() => {
-    fetchCourses();
+    fetchCourses({ setFetchCourses, setDataFilter });
   }, []);
 
   const onSuccess = () => {
-    fetchCourses();
+    fetchCourses({ setFetchCourses, setDataFilter });
   };
 
   const columns = [
@@ -50,11 +31,6 @@ const Courses = () => {
       title: "Title",
       dataIndex: "title",
       key: "title",
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
     },
     {
       title: "Status",
@@ -84,92 +60,22 @@ const Courses = () => {
       render: (_, record: Courses) => (
         <ActionButtons
           record={record}
-          fetchCourses={fetchCourses}
+          fetchCourses={() => fetchCourses({ setFetchCourses, setDataFilter })}
           onSuccess={onSuccess}
         />
       ),
     },
   ];
 
-  const instuctorOptions = [
-    { value: "664f1717c31e4c87fae88273", label: "Instructor 1" },
-    { value: "664f1701ebd5c8b7f3ab71f4", label: "Instructor 2" },
-  ];
-
-  const statusOptions = [
-    { value: "Active", label: "Active" },
-    { value: "Inactive", label: "Inactive" },
-  ];
-
-  const applyFilters = (
-    status: string | undefined,
-    instructorId: string | undefined,
-    search: string
-  ) => {
-    let filtered = [...data];
-
-    if (status) {
-      filtered = filtered.filter((item) => item.status === status);
-    }
-
-    if (instructorId) {
-      filtered = filtered.filter((item) => item.instructor_id === instructorId);
-    }
-
-    if (search) {
-      filtered = filtered.filter(
-        (course) =>
-          course.title.toLowerCase().includes(search) ||
-          course.description.toLowerCase().includes(search)
-      );
-    }
-
-    setDataSource(filtered);
-  };
-
   return (
     <PageWrapper>
-      {/* <div className="pt-12"></div> */}
       <h1 className="text-2xl font-bold">Courses</h1>
       <p className="my-4">This is the courses page.</p>
-      <div className="flex gap-4">
-        <div className="flex gap-4 mb-4">
-          <Input.Search
-            onChange={debounce((e) => {
-              const value = e.target.value.toLowerCase();
-              setSearchText(value);
-              applyFilters(selectedStatus, selectedInstructor, value);
-              setCurrentPage(1);
-            }, 300)}
-            prefix={<SearchOutlined />}
-            placeholder="Title Filter..."
-          />
-        </div>
-        <div className="flex gap-4 mb-4">
-          <Select
-            options={instuctorOptions}
-            onChange={(value) => {
-              setSelectedInstructor(value);
-              applyFilters(selectedStatus, value, searchText);
-              setCurrentPage(1);
-            }}
-            allowClear
-            placeholder="Instructor Filter..."
-          />
-        </div>
-        <div className="flex gap-4 mb-4">
-          <Select
-            options={statusOptions}
-            onChange={(value) => {
-              setSelectedStatus(value);
-              applyFilters(value, selectedInstructor, searchText);
-              setCurrentPage(1);
-            }}
-            allowClear
-            placeholder="Status Filter..."
-          />
-        </div>
-      </div>
+      <FilterBar
+        data={data}
+        setDataFilter={setDataFilter}
+        setCurrentPage={setCurrentPage}
+      />
       <Table
         rowKey="_id"
         bordered
@@ -182,7 +88,7 @@ const Courses = () => {
         size="middle"
         pagination={{
           showSizeChanger: true,
-          total: dataSource.length,
+          total: dataFilter.length,
           pageSizeOptions: ["10", "20", "30", "40"],
           showTotal: (total) => `Total ${total} items`,
           onChange: (page, size) => {
@@ -203,7 +109,7 @@ const Courses = () => {
         })}
         expandable={{
           expandedRowRender: (record) => (
-            <p className="m-0">{record.image_url}</p>
+            <p className="m-0">{record.description}</p>
           ),
         }}
       />

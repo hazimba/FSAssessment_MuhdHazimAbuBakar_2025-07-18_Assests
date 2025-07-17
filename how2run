@@ -1,0 +1,14 @@
+how to run
+
+open api-assess repo
+
+1. this project use npm and mongodb compass
+2. npm install
+3. npm run dev to connect db
+
+open assets-assess
+
+1. this project use npm
+2. npm install
+3. nvm use for antd compatibility
+4. npm run dev to start project

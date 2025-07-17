@@ -11,8 +11,11 @@ export interface Courses {
 }
 export interface Users {
   _id: string;
-  name: string;
-  email: string;
   role: string;
+  name: string;
   status: string;
+  identification: string;
+  createdAt: Date;
+  updatedAt: Date;
+  instructors: Users[];
 }

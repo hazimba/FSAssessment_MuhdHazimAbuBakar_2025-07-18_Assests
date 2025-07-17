@@ -1,6 +1,8 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button, Form, Input, InputNumber, Select, Space } from "antd";
+import { fetchEntities } from "../services/fetchEntities";
+import { Users } from "@/types";
 
 const { Option } = Select;
 
@@ -14,6 +16,25 @@ interface CourseFormProps {
 
 const CourseForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
   const [form] = Form.useForm();
+
+  const [instructorOptions, setInstructor] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    fetchEntities<Users>({
+      setfetchEntities: (data) => {
+        const roleInstructor = data
+          .filter((u) => u.role === "Instructor")
+          .map((u) => ({
+            value: u._id,
+            label: u.name,
+          }));
+        setInstructor(roleInstructor);
+      },
+      entities: "users?role=Instructor",
+    });
+  }, []);
 
   useEffect(() => {
     if (initialValues) {
@@ -55,10 +76,11 @@ const CourseForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
         label="Instructor"
         rules={[{ required: true, message: "Please select an instructor" }]}
       >
-        <Select placeholder="Select an instructor" allowClear>
-          <Option value="664f1701ebd5c8b7f3ab71f4">Instructor 1</Option>
-          <Option value="664f1717c31e4c87fae88273">Instructor 2</Option>
-        </Select>
+        <Select
+          placeholder="Select an instructor"
+          allowClear
+          options={instructorOptions}
+        />
       </Form.Item>
 
       <Form.Item>

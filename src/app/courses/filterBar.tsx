@@ -1,5 +1,5 @@
 "use client";
-import type { Courses, Users } from "@/types";
+import { Status, UserRole, type Courses, type Users } from "@/types";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Select } from "antd";
 import debounce from "lodash/debounce";
@@ -21,7 +21,7 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
     fetchEntities<Users>({
       setfetchEntities: (data) => {
         const roleInstructor = data
-          .filter((u) => u.role === "Instructor")
+          .filter((u) => u.role === UserRole.INSTRUCTOR)
           .map((u) => ({
             value: u._id,
             label: u.name,
@@ -39,8 +39,8 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
   const [searchText, setSearchText] = useState<string>("");
 
   const statusOptions = [
-    { value: "Active", label: "Active" },
-    { value: "Inactive", label: "Inactive" },
+    { value: Status.ACTIVE, label: Status.ACTIVE },
+    { value: Status.INACTIVE, label: Status.INACTIVE },
   ];
 
   const applyFilters = (

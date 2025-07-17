@@ -7,8 +7,6 @@ interface fetchEntitiesResponse<T> {
   entities?: string;
 }
 
-// soon to be replaced with a more generic fetch function
-// that can handle different types of data fetching
 export const fetchEntities = async <T>({
   setfetchEntities,
   setDataFilter,

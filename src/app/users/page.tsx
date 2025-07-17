@@ -2,7 +2,7 @@
 import PageWrapper from "@/components/pageWrapper";
 import { useEffect, useMemo, useState } from "react";
 import { fetchEntities } from "../services/fetchEntities";
-import type { Courses, Users } from "@/types";
+import { Status, type Courses, type Users } from "@/types";
 import { Table, Tag } from "antd";
 import ActionButtons from "@/components/actionButton";
 
@@ -116,7 +116,7 @@ const Users = () => {
         dataSource={paginatedData}
         columns={columns}
         rowClassName={(record) =>
-          record.status === "Inactive" ? "bg-red-100" : ""
+          record.status === Status.INACTIVE ? "bg-red-100" : ""
         }
         onRow={(record) => ({
           onClick: () => {

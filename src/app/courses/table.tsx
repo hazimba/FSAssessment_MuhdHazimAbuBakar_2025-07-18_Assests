@@ -1,5 +1,5 @@
 import ActionButtons from "@/components/actionButton";
-import { Courses, Users } from "@/types";
+import { Courses, Status, UserRole, Users } from "@/types";
 import { fetchEntities } from "../services/fetchEntities";
 import { Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
@@ -43,7 +43,7 @@ const CoursesTable = ({
     fetchEntities<Users>({
       setfetchEntities: (data) => {
         const roleInstructor = data
-          .filter((u) => u.role === "Instructor")
+          .filter((u) => u.role === UserRole.INSTRUCTOR)
           .map((u) => ({
             value: u._id,
             label: u.name,
@@ -89,7 +89,7 @@ const CoursesTable = ({
       },
     },
     {
-      title: "Instructor",
+      title: UserRole.INSTRUCTOR,
       dataIndex: "instructor_id",
       key: "instructor_id",
       render: (instructorId: string) => {
@@ -155,7 +155,7 @@ const CoursesTable = ({
       dataSource={paginatedData}
       columns={columns}
       rowClassName={(record) =>
-        record.status === "Inactive" ? "bg-red-100" : ""
+        record.status === Status.INACTIVE ? "bg-red-100" : ""
       }
       onRow={(record) => ({
         onClick: () => {

@@ -1,7 +1,7 @@
 "use client";
 import CourseForm from "@/app/courses/courseForm";
 import { Courses } from "@/types";
-import { Button, Modal, Popconfirm } from "antd";
+import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -29,8 +29,15 @@ const ActionButtons = ({
         `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.course.deleteCourse}/${id}`
       );
       if (!response || !response.data) {
+        notification.error({
+          message: `Error deleting ${name}`,
+          description: response.statusText,
+        });
         throw new Error("Network response was not ok");
       }
+      notification.success({
+        message: `Deleted successfully`,
+      });
       await fetchCourses();
       onSuccess();
     } catch (error) {
@@ -74,12 +81,19 @@ const ActionButtons = ({
         values
       );
       if (response && response.status !== 200) {
+        notification.error({
+          message: `Error updating ${name}`,
+          description: response.statusText,
+        });
         throw new Error(`Error updating ${name}: ${response.statusText}`);
       }
 
       if (!response || !response.data) {
         throw new Error("Network response was not ok");
       }
+      notification.success({
+        message: `Updated successfully`,
+      });
       fetchCourses();
       onSuccess();
     } catch (error) {

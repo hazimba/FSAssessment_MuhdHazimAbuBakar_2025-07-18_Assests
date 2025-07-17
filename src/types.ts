@@ -9,6 +9,7 @@ export interface Courses {
   instructor_id: string;
   image_url?: string;
 }
+
 export interface Users {
   _id: string;
   role: string;
@@ -18,6 +19,7 @@ export interface Users {
   createdAt: Date;
   updatedAt: Date;
   instructors: Users[];
+  enrollment: string[];
 }
 
 export enum UserRole {

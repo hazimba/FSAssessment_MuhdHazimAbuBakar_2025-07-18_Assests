@@ -17,7 +17,7 @@ const Create = () => {
       );
       console.log("Created:", response.data);
       notification.success({
-        message: "Users created successfully",
+        message: "User created successfully",
       });
       router.push("/users");
     } catch (err) {
@@ -30,7 +30,6 @@ const Create = () => {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <h1 className="text-2xl font-bold mb-4">Create User</h1>
-      <form className="w-full max-w-sm">{/* Form fields go here */}</form>
       <UserForm onSubmit={handleSubmit} />
     </div>
   );

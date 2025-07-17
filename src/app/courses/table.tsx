@@ -33,20 +33,33 @@ const CoursesTable = ({
   }, [setFetchCourses, setDataFilter]);
 
   const columns = [
+    // {
+    //   title: "No",
+    //   dataIndex: "index",
+    //   key: "index",
+    //   //   eslint-disable-next-line @typescript-eslint/no-explicit-any
+    //   render: (_: any, __: any, index: number) => (
+    //     <span>{(currentPage - 1) * pageSize + index + 1}</span>
+    //   ),
+    // },
     {
       title: "Title",
       dataIndex: "title",
       key: "title",
+      sorter: (a: Courses, b: Courses) => a.title.localeCompare(b.title),
     },
     {
       title: "Status",
       dataIndex: "status",
       key: "status",
+      sorter: (a: Courses, b: Courses) => a.status.localeCompare(b.status),
     },
     {
       title: "Price (RM)",
       dataIndex: "price",
       key: "price",
+      sorter: (a: Courses, b: Courses) =>
+        parseFloat(a.price.$numberDecimal) - parseFloat(b.price.$numberDecimal),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       render: (price: Courses | any) => {
         const value = price?.$numberDecimal;

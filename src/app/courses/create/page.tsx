@@ -1,10 +1,14 @@
 "use client";
-import PageWrapper from "@/components/pageWrapper";
 import CourseForm from "@/app/courses/courseForm";
+import PageWrapper from "@/components/pageWrapper";
 import apiEndpoints from "@/config/apiEndPoint";
+import { notification } from "antd";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const CreateCoursePage = () => {
+  const router = useRouter();
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (values: any) => {
     try {
@@ -13,7 +17,14 @@ const CreateCoursePage = () => {
         values
       );
       console.log("Created:", response.data);
+      notification.success({
+        message: "Course created successfully",
+      });
+      router.push("/courses");
     } catch (err) {
+      notification.error({
+        message: "Failed to create course",
+      });
       console.error("Create error:", err);
     }
   };

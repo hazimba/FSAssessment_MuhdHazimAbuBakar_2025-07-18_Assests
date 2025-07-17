@@ -5,6 +5,7 @@ import axios from "axios";
 import apiEndpoints from "@/config/apiEndPoint";
 import { Users } from "@/types";
 import { useRouter } from "next/navigation";
+import PageWrapper from "@/components/pageWrapper";
 
 const Create = () => {
   const router = useRouter();
@@ -15,10 +16,11 @@ const Create = () => {
         process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.user.createUser,
         values
       );
-      console.log("Created:", response.data);
-      notification.success({
-        message: "User created successfully",
-      });
+      if (response.status === 201) {
+        notification.success({
+          message: "User created successfully",
+        });
+      }
       router.push("/users");
     } catch (err) {
       notification.error({
@@ -28,10 +30,12 @@ const Create = () => {
     }
   };
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <h1 className="text-2xl font-bold mb-4">Create User</h1>
-      <UserForm onSubmit={handleSubmit} />
-    </div>
+    <PageWrapper>
+      <div className="flex flex-col items-center justify-center h-screen">
+        <h1 className="text-2xl font-bold mb-4">Create User</h1>
+        <UserForm onSubmit={handleSubmit} />
+      </div>
+    </PageWrapper>
   );
 };
 export default Create;

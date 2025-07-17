@@ -1,12 +1,11 @@
 "use client";
-import CourseForm from "@/app/courses/courseForm";
+import UserForm from "@/app/users/userForm";
+import apiEndpoints from "@/config/apiEndPoint";
 import { Courses, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import apiEndpoints from "@/config/apiEndPoint";
-import UserForm from "@/app/users/userForm";
+import { useState } from "react";
 
 interface ActionButtonsProps {
   record: Courses | Users;
@@ -26,7 +25,6 @@ const ActionButtons = ({
   const page = pathname.includes("/courses");
 
   const handleDelete = async (id: string) => {
-    console.log("Deleting:", id);
     try {
       const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_MONGO_DB_API}${
@@ -43,7 +41,9 @@ const ActionButtons = ({
       notification.success({
         message: `Deleted successfully`,
       });
-      await fetchEntities();
+      if (fetchEntities) {
+        await fetchEntities();
+      }
       onSuccess();
     } catch (error) {
       console.error(`Error deleting ${name} :`, error);
@@ -62,7 +62,9 @@ const ActionButtons = ({
       if (!response || !response.data) {
         throw new Error("Network response was not ok");
       }
-      await fetchEntities();
+      if (fetchEntities) {
+        await fetchEntities();
+      }
       onSuccess();
     } catch (error) {
       console.error(`Error restoring ${name} employee:`, error);
@@ -71,7 +73,6 @@ const ActionButtons = ({
   const [initialValue, setInitialValue] = useState<Courses | Users | null>(
     null
   );
-  console.log("Initial Value:", initialValue);
 
   const handleModalOpen = (record: Courses) => {
     setOpenModalEdit(true);
@@ -113,7 +114,9 @@ const ActionButtons = ({
       notification.success({
         message: `Updated successfully`,
       });
-      await fetchEntities();
+      if (fetchEntities) {
+        await fetchEntities();
+      }
       onSuccess();
     } catch (error) {
       console.error(`Error updating ${name}:`, error);
@@ -127,7 +130,7 @@ const ActionButtons = ({
       <Button
         onClick={(e) => {
           e.stopPropagation();
-          handleModalOpen(record);
+          handleModalOpen(record as Courses);
         }}
         className="text-blue-500 hover:underline"
       >

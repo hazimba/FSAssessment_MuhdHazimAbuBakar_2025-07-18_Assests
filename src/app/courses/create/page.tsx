@@ -10,17 +10,17 @@ import { useRouter } from "next/navigation";
 const CreateCoursePage = () => {
   const router = useRouter();
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSubmit = async (values: Courses) => {
     try {
       const response = await axios.post(
         process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.course.createCourse,
         values
       );
-      console.log("Created:", response.data);
-      notification.success({
-        message: "Course created successfully",
-      });
+      if (response.status === 201) {
+        notification.success({
+          message: "Course created successfully",
+        });
+      }
       router.push("/courses");
     } catch (err) {
       notification.error({

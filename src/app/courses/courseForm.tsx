@@ -5,7 +5,7 @@ import { fetchEntities } from "../services/fetchEntities";
 import { Courses, UserRole, Users } from "@/types";
 
 interface CourseFormProps {
-  initialValues?: Courses;
+  initialValues: Courses;
   onSubmit: (values: Courses) => void;
   loading?: boolean;
 }

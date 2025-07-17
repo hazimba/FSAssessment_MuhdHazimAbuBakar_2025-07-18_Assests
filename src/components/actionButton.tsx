@@ -1,4 +1,5 @@
 "use client";
+import CourseForm from "@/app/courses/courseForm";
 import UserForm from "@/app/users/userForm";
 import apiEndpoints from "@/config/apiEndPoint";
 import { Courses, Status, Users } from "@/types";
@@ -80,8 +81,8 @@ const ActionButtons = ({
     if (name === "course") {
       setInitialValue({
         ...record,
-        price: { $numberDecimal: record.price.$numberDecimal },
-      } as Courses);
+        price: record.price.$numberDecimal,
+      } as unknown as Courses);
     } else {
       setInitialValue(record as unknown as Users);
     }
@@ -142,7 +143,14 @@ const ActionButtons = ({
         onCancel={handleModalCancel}
         footer={null}
       >
-        {initialValue && (
+        {initialValue && name === "course" && (
+          <CourseForm
+            initialValues={initialValue}
+            onSubmit={handleFormSubmit}
+            loading={false}
+          />
+        )}
+        {initialValue && name === "user" && (
           <UserForm
             initialValues={initialValue}
             onSubmit={handleFormSubmit}

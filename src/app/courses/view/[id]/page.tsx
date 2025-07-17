@@ -6,13 +6,10 @@ import axios from "axios";
 import apiEndpoints from "@/config/apiEndPoint";
 import { Image } from "antd";
 import { Courses } from "@/types";
-import { usePathname } from "next/navigation";
 
 const ViewCourse = () => {
   const { id } = useParams();
   const [courseValue, setCourseValue] = useState<Courses | null>(null);
-  const pathname = usePathname();
-  console.log("Pathname:", pathname);
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -30,7 +27,7 @@ const ViewCourse = () => {
   if (!courseValue) {
     return <PageWrapper>Loading...</PageWrapper>;
   }
-  console.log("Initial Data:", courseValue);
+
   const render = () => {
     return (
       <div className="flex flex-col items-center justify-center w-screen">

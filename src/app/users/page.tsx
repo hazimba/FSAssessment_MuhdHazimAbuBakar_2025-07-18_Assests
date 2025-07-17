@@ -20,7 +20,6 @@ const Users = () => {
     });
   }, []);
 
-  console.log("Courses data:", courses);
   const onSuccess = () => {
     fetchEntities<Users>({
       setfetchEntities,
@@ -28,13 +27,11 @@ const Users = () => {
       entities: "users",
     });
   };
-  console.log("dataFilter", dataFilter);
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return dataFilter.slice(start, start + pageSize);
   }, [dataFilter, currentPage, pageSize]);
 
-  console.log("Users data:", data);
   useEffect(() => {
     fetchEntities<Users>({
       setfetchEntities: setfetchEntities,

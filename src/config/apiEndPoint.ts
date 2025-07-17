@@ -10,6 +10,7 @@ const apiEndpoints = {
   },
   user: {
     getUsers: "/getUsers",
+    getUser: "/getUser",
     deleteUser: "/deleteUser",
     restoreUser: "/restoreUser",
     createUser: "/createUser",

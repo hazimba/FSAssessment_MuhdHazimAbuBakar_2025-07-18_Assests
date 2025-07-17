@@ -1,5 +1,5 @@
 "use client";
-import { Courses, UserRole } from "@/types";
+import { Courses, UserRole, Users } from "@/types";
 import { Button, Form, Input, Select, Space } from "antd";
 import { useEffect, useState } from "react";
 import { fetchEntities } from "../services/fetchEntities";
@@ -7,10 +7,8 @@ import { fetchEntities } from "../services/fetchEntities";
 const { Option } = Select;
 
 interface CourseFormProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onSubmit?: (values: any) => void;
+  initialValues?: Users | Courses;
+  onSubmit?: (values: Users | Courses) => void;
   loading?: boolean;
 }
 
@@ -34,7 +32,6 @@ const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
       entities: "courses",
     });
   }, []);
-  console.log("Courses:", courses);
 
   useEffect(() => {
     if (initialValues) {

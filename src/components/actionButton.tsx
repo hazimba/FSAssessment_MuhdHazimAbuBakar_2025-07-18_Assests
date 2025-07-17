@@ -118,7 +118,8 @@ const ActionButtons = ({
         title={`Are you sure you want to ${
           record.status === "Active" ? "delete" : "undelete"
         } this course?`}
-        onConfirm={() => {
+        onConfirm={(e) => {
+          e?.stopPropagation();
           if (record._id && record.status === "Active") {
             handleDelete(record._id);
           } else if (record._id && record.status === "Inactive") {

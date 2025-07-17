@@ -19,3 +19,13 @@ export interface Users {
   updatedAt: Date;
   instructors: Users[];
 }
+
+export enum UserRole {
+  STUDENT = "Student",
+  INSTRUCTOR = "Instructor",
+}
+
+export enum CourseStatus {
+  ACTIVE = "Active",
+  INACTIVE = "Inactive",
+}

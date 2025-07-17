@@ -92,7 +92,10 @@ const ActionButtons = ({
   return (
     <div className="flex space-x-2">
       <Button
-        onClick={() => handleModalOpen(record)}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleModalOpen(record);
+        }}
         className="text-blue-500 hover:underline"
       >
         Edit

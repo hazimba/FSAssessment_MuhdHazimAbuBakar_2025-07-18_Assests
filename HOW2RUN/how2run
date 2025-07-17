@@ -1,0 +1,70 @@
+## ASSESSMENT
+
+self feedback on the project:
+there are 5 task included in the assessment,
+
+1. Task 1: API Design & Implementation:
+
+   - build functional RESTful API
+   - apply all the require Endpoint using Express.js
+
+2. Task 2: Frontend Component
+
+   - able to meet all the Main Feature requirement using Tailwind CSS, antD component
+   - successfully meet the bonus feature (Reusable components and API-integrated form submission)
+
+3. Task 3: Database Design (Schema)
+
+   - created collection of Users (Student, Instructor) and Courses
+
+4. Task 4: Project Structure & Git
+
+   - attached below github link for the assessment
+     https://github.com/hazimba/FSAssessment_MuhdHazimAbuBakar_2025-07-18_API.git
+     https://github.com/hazimba/FSAssessment_MuhdHazimAbuBakar_2025-07-18_Assests.git
+
+5. Task 5 (Bonus): DevOps Touch
+
+   - sadly this beyond my knowledge, only use in current company but never touch it, hope to learn in future
+
+-- HOW TO RUN
+open api-assess repo
+
+1. this project use npm and mongodb compass
+2. npm install
+3. npm run dev to connect db
+
+open assets-assess
+
+1. this project use npm
+2. npm install
+3. nvm use for antd compatibility
+4. npm run dev to start project
+
+attached below screenshot of the project
+
+1. main page
+
+   ![alt text](image.png)
+
+2. courses
+
+   - table display ![alt text](image-1.png)
+   - filter table ![alt text](image-2.png)
+   - view page ![alt text](image-3.png)
+   - edit modal ![alt text](image-4.png)
+   - create page ![alt text](image-5.png)
+
+3. users
+
+   - table display ![alt text](image-6.png)
+   - view page ![alt text](image-7.png)
+   - edit modal ![alt text](image-8.png)
+   - create page ![alt text](image-9.png)
+
+the project applied with all my skills and knowledge, the project delivered more towards the functionality,
+rather than design, even i believe i not deliver all the requirement,
+but i quite satisfy with my work, at least i see where i am right now,
+this is what you can expect from me for now,
+and along the way of course there will more learning and upskill for me to self improvement and
+contribute to company, appreciate for this opportunity.

@@ -1,9 +1,10 @@
 "use client";
-import type { Courses } from "@/types";
+import type { Courses, Users } from "@/types";
 import { SearchOutlined } from "@ant-design/icons";
 import { Input, Select } from "antd";
 import debounce from "lodash/debounce";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { fetchEntities } from "../services/fetchEntities";
 
 interface FilterBarProps {
   data: Courses[];
@@ -12,15 +13,30 @@ interface FilterBarProps {
 }
 
 const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
+  const [instructorOptions, setInstructor] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    fetchEntities<Users>({
+      setfetchEntities: (data) => {
+        const roleInstructor = data
+          .filter((u) => u.role === "Instructor")
+          .map((u) => ({
+            value: u._id,
+            label: u.name,
+          }));
+        setInstructor(roleInstructor);
+      },
+      entities: "users?role=Instructor",
+    });
+  }, []);
+
   const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
   const [selectedInstructor, setSelectedInstructor] = useState<
     string | undefined
   >();
   const [searchText, setSearchText] = useState<string>("");
-  const instuctorOptions = [
-    { value: "664f1717c31e4c87fae88273", label: "Instructor 1" },
-    { value: "664f1701ebd5c8b7f3ab71f4", label: "Instructor 2" },
-  ];
 
   const statusOptions = [
     { value: "Active", label: "Active" },
@@ -77,7 +93,7 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
       </div>
       <div className="flex gap-4 mb-4">
         <Select
-          options={instuctorOptions}
+          options={instructorOptions}
           onChange={(value) => {
             setSelectedInstructor(value);
             applyFilters(

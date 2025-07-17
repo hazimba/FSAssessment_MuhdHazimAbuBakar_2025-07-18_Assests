@@ -1,12 +1,12 @@
 import ActionButtons from "@/components/actionButton";
-import { Courses } from "@/types";
-import { fetchCourses } from "../services/fetchCourses";
+import { Courses, Users } from "@/types";
+import { fetchEntities } from "../services/fetchEntities";
 import { Table } from "antd";
 import { useEffect, useMemo, useState } from "react";
 
 interface CoursesTableProps {
   dataFilter: Courses[];
-  setFetchCourses: (data: Courses[]) => void;
+  setfetchEntities: (data: Courses[]) => void;
   setDataFilter: (data: Courses[]) => void;
   onSuccess: () => void;
   currentPage?: number;
@@ -15,13 +15,16 @@ interface CoursesTableProps {
 
 const CoursesTable = ({
   dataFilter,
-  setFetchCourses,
+  setfetchEntities,
   setDataFilter,
   onSuccess,
   currentPage = 1,
   setCurrentPage,
 }: CoursesTableProps) => {
   const [pageSize, setPageSize] = useState(10);
+  const [instructorOptions, setInstructor] = useState<
+    { value: string; label: string }[]
+  >([]);
 
   const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -29,8 +32,27 @@ const CoursesTable = ({
   }, [dataFilter, pageSize, currentPage]);
 
   useEffect(() => {
-    fetchCourses({ setFetchCourses, setDataFilter });
-  }, [setFetchCourses, setDataFilter]);
+    fetchEntities<Courses>({
+      setfetchEntities,
+      setDataFilter,
+      entities: "courses",
+    });
+  }, [setfetchEntities, setDataFilter]);
+
+  useEffect(() => {
+    fetchEntities<Users>({
+      setfetchEntities: (data) => {
+        const roleInstructor = data
+          .filter((u) => u.role === "Instructor")
+          .map((u) => ({
+            value: u._id,
+            label: u.name,
+          }));
+        setInstructor(roleInstructor);
+      },
+      entities: "users?role=Instructor",
+    });
+  }, []);
 
   const columns = [
     // {
@@ -70,6 +92,14 @@ const CoursesTable = ({
       title: "Instructor",
       dataIndex: "instructor_id",
       key: "instructor_id",
+      render: (instructorId: string) => {
+        const instructor = instructorOptions.find(
+          (instructor) => instructor.value === instructorId
+        );
+        return instructor ? instructor.label : "";
+      },
+      sorter: (a: Courses, b: Courses) =>
+        a.instructor_id.localeCompare(b.instructor_id),
     },
     {
       title: "Actions",
@@ -85,8 +115,12 @@ const CoursesTable = ({
           >
             <ActionButtons
               record={record}
-              fetchCourses={() =>
-                fetchCourses({ setFetchCourses, setDataFilter })
+              fetchEntities={() =>
+                fetchEntities<Courses>({
+                  setfetchEntities,
+                  setDataFilter,
+                  entities: "courses",
+                })
               }
               onSuccess={onSuccess}
             />

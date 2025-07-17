@@ -1,5 +1,5 @@
 "use client";
-import { fetchCourses } from "@/app/services/fetchCourses";
+import { fetchEntities } from "@/app/services/fetchEntities";
 import PageWrapper from "@/components/pageWrapper";
 import type { Courses } from "@/types";
 import { useEffect, useState } from "react";
@@ -7,16 +7,24 @@ import FilterBar from "./filterBar";
 import CoursesTable from "./table";
 
 const Courses = () => {
-  const [data, setFetchCourses] = useState<Courses[]>([]);
+  const [data, setfetchEntities] = useState<Courses[]>([]);
   const [dataFilter, setDataFilter] = useState<Courses[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetchCourses({ setFetchCourses, setDataFilter });
+    fetchEntities<Courses>({
+      setfetchEntities,
+      setDataFilter,
+      entities: "courses",
+    });
   }, []);
 
   const onSuccess = () => {
-    fetchCourses({ setFetchCourses, setDataFilter });
+    fetchEntities<Courses>({
+      setfetchEntities,
+      setDataFilter,
+      entities: "courses",
+    });
   };
 
   return (
@@ -31,7 +39,7 @@ const Courses = () => {
       <CoursesTable
         currentPage={currentPage}
         dataFilter={dataFilter}
-        setFetchCourses={setFetchCourses}
+        setfetchEntities={setfetchEntities}
         setDataFilter={setDataFilter}
         onSuccess={onSuccess}
         setCurrentPage={setCurrentPage}

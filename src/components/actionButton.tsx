@@ -1,26 +1,25 @@
 "use client";
 import CourseForm from "@/app/courses/courseForm";
-import { Courses } from "@/types";
+import { Courses, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import apiEndpoints from "@/config/apiEndPoint";
 
 interface ActionButtonsProps {
   record: Courses;
-  fetchCourses: () => void;
+  fetchEntities: () => void;
   onSuccess: () => void;
 }
 
 const ActionButtons = ({
   record,
-  fetchCourses,
+  fetchEntities,
   onSuccess,
 }: ActionButtonsProps) => {
   const pathname = usePathname();
   const [openModalEdit, setOpenModalEdit] = useState(false);
-
   const name = pathname === "/courses" ? "course" : "user";
 
   const handleDelete = async (id: string) => {
@@ -38,7 +37,7 @@ const ActionButtons = ({
       notification.success({
         message: `Deleted successfully`,
       });
-      await fetchCourses();
+      await fetchEntities();
       onSuccess();
     } catch (error) {
       console.error(`Error deleting ${name} :`, error);
@@ -53,7 +52,7 @@ const ActionButtons = ({
       if (!response || !response.data) {
         throw new Error("Network response was not ok");
       }
-      await fetchCourses();
+      await fetchEntities();
       onSuccess();
     } catch (error) {
       console.error(`Error restoring ${name} employee:`, error);
@@ -94,7 +93,7 @@ const ActionButtons = ({
       notification.success({
         message: `Updated successfully`,
       });
-      fetchCourses();
+      fetchEntities();
       onSuccess();
     } catch (error) {
       console.error(`Error updating ${name}:`, error);

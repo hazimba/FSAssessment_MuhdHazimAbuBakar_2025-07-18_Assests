@@ -8,7 +8,7 @@ const { Option } = Select;
 
 interface CourseFormProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  initialValues?: any;
+  initialValues: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSubmit?: (values: any) => void;
   loading?: boolean;
@@ -47,7 +47,7 @@ const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
       form={form}
       name="course-form"
       onFinish={onSubmit}
-      style={{ maxWidth: 600 }}
+      style={{ width: "400px" }}
       layout="vertical"
     >
       <Form.Item name="_id" hidden>
@@ -82,7 +82,7 @@ const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
             mode="multiple"
             placeholder="Select courses..."
             options={courses}
-            style={{ width: "200px" }}
+            style={{ width: "400px" }}
           />
         </Form.Item>
       )}

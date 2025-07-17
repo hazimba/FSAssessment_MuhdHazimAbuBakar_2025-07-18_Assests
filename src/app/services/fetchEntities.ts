@@ -1,10 +1,9 @@
 import apiEndpoints from "@/config/apiEndPoint";
-import { Courses } from "@/types";
 import axios from "axios";
 
 interface fetchEntitiesResponse<T> {
   setfetchEntities: (data: T[]) => void;
-  setDataFilter?: (data: Courses[]) => void;
+  setDataFilter?: (data: T[]) => void;
   entities?: string;
 }
 

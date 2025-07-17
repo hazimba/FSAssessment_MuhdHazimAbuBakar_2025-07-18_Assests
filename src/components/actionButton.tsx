@@ -6,10 +6,11 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import apiEndpoints from "@/config/apiEndPoint";
+import UserForm from "@/app/users/userForm";
 
 interface ActionButtonsProps {
-  record: Courses;
-  fetchEntities: () => void;
+  record: Courses | Users;
+  fetchEntities?: () => void;
   onSuccess: () => void;
 }
 
@@ -22,10 +23,15 @@ const ActionButtons = ({
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const name = pathname === "/courses" ? "course" : "user";
 
+  const page = pathname.includes("/courses");
+
   const handleDelete = async (id: string) => {
+    console.log("Deleting:", id);
     try {
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.course.deleteCourse}/${id}`
+        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${
+          page ? apiEndpoints.course.deleteCourse : apiEndpoints.user.deleteUser
+        }/${id}`
       );
       if (!response || !response.data) {
         notification.error({
@@ -47,7 +53,11 @@ const ActionButtons = ({
   const handleUndelete = async (id: string) => {
     try {
       const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.course.restoreCourse}/${id}`
+        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${
+          page
+            ? apiEndpoints.course.restoreCourse
+            : apiEndpoints.user.restoreUser
+        }/${id}`
       );
       if (!response || !response.data) {
         throw new Error("Network response was not ok");
@@ -58,14 +68,22 @@ const ActionButtons = ({
       console.error(`Error restoring ${name} employee:`, error);
     }
   };
-  const [initialValue, setInitialValue] = useState(null);
+  const [initialValue, setInitialValue] = useState<Courses | Users | null>(
+    null
+  );
+  console.log("Initial Value:", initialValue);
 
   const handleModalOpen = (record: Courses) => {
     setOpenModalEdit(true);
-    setInitialValue({
-      ...record,
-      price: parseFloat(record.price.$numberDecimal) || 0,
-    });
+
+    if (name === "course") {
+      setInitialValue({
+        ...record,
+        price: { $numberDecimal: record.price.$numberDecimal },
+      } as Courses);
+    } else {
+      setInitialValue(record as unknown as Users);
+    }
   };
 
   const handleModalCancel = () => {
@@ -76,7 +94,9 @@ const ActionButtons = ({
   const handleFormSubmit = async (values: Courses) => {
     try {
       const response = await axios.patch(
-        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.course.updateCourse}/${values._id}`,
+        `${process.env.NEXT_PUBLIC_MONGO_DB_API}${
+          page ? apiEndpoints.course.updateCourse : apiEndpoints.user.updateUser
+        }/${values._id}`,
         values
       );
       if (response && response.status !== 200) {
@@ -93,7 +113,7 @@ const ActionButtons = ({
       notification.success({
         message: `Updated successfully`,
       });
-      fetchEntities();
+      await fetchEntities();
       onSuccess();
     } catch (error) {
       console.error(`Error updating ${name}:`, error);
@@ -114,13 +134,13 @@ const ActionButtons = ({
         Edit
       </Button>
       <Modal
-        title="Edit Course"
+        title={`Edit ${name}`}
         open={openModalEdit}
         onCancel={handleModalCancel}
         footer={null}
       >
         {initialValue && (
-          <CourseForm
+          <UserForm
             initialValues={initialValue}
             onSubmit={handleFormSubmit}
             loading={false}
@@ -130,7 +150,7 @@ const ActionButtons = ({
       <Popconfirm
         title={`Are you sure you want to ${
           record.status === "Active" ? "delete" : "undelete"
-        } this course?`}
+        } this ${name}?`}
         onConfirm={(e) => {
           e?.stopPropagation();
           if (record._id && record.status === "Active") {

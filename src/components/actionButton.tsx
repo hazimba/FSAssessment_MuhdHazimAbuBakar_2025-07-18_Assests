@@ -5,7 +5,6 @@ import apiEndpoints from "@/config/apiEndPoint";
 import { Courses, Status, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
-import { forEach } from "lodash";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -165,7 +164,7 @@ const ActionButtons = ({
       >
         {initialValue && name === "course" && (
           <CourseForm
-            initialValues={initialValue}
+            initialValues={initialValue as Courses}
             onSubmit={handleFormSubmit}
             loading={false}
           />

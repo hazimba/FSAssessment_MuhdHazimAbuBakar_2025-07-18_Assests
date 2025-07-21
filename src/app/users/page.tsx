@@ -7,6 +7,7 @@ import { Table, Tag } from "antd";
 import ActionButtons from "@/components/actionButton";
 
 const Users = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setfetchEntities] = useState<Users[]>([]);
   const [courses, setCourses] = useState<Courses[]>([]);
   const [dataFilter, setDataFilter] = useState<Users[]>([]);

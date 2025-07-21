@@ -5,6 +5,7 @@ import apiEndpoints from "@/config/apiEndPoint";
 import { Courses, Status, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
+import { forEach } from "lodash";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
@@ -93,7 +94,7 @@ const ActionButtons = ({
     setInitialValue(null);
   };
 
-  const handleFormSubmit = async (values: Courses) => {
+  const handleFormSubmit = async (values: Courses | Users) => {
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_MONGO_DB_API}${
@@ -101,17 +102,35 @@ const ActionButtons = ({
         }/${values._id}`,
         values
       );
-      if (response && response.status !== 200) {
+      if ("enrollment" in values && Array.isArray(values.enrollment)) {
+        for (const courseId of values.enrollment) {
+          const res = await axios.patch(
+            `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.course.updateCourse}/${courseId}`,
+            {
+              $addToSet: { student_ids: values._id },
+            }
+          );
+
+          if (res.status !== 200) {
+            notification.error({
+              message: `Error updating course ${courseId}`,
+              description: res.statusText,
+            });
+            throw new Error(
+              `Error updating course ${courseId}: ${res.statusText}`
+            );
+          }
+        }
+      }
+
+      if (!response || response.status !== 200) {
         notification.error({
           message: `Error updating ${name}`,
           description: response.statusText,
         });
-        throw new Error(`Error updating ${name}: ${response.statusText}`);
+        throw new Error(`Error updating ${name}: ${response?.statusText}`);
       }
 
-      if (!response || !response.data) {
-        throw new Error("Network response was not ok");
-      }
       notification.success({
         message: `Updated successfully`,
       });
@@ -121,9 +140,10 @@ const ActionButtons = ({
       onSuccess();
     } catch (error) {
       console.error(`Error updating ${name}:`, error);
+    } finally {
+      setOpenModalEdit(false);
+      setInitialValue(null);
     }
-    setOpenModalEdit(false);
-    setInitialValue(null);
   };
 
   return (

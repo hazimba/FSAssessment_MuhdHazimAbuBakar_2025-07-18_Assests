@@ -20,6 +20,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="relative flex flex-col items-center justify-between w-full bg-gray-200">
       <Link
+        prefetch={false}
         href={
           isSubPath
             ? "/"
@@ -37,6 +38,7 @@ const PageWrapper = ({ children }: { children: React.ReactNode }) => {
         <></>
       ) : (
         <Link
+          prefetch={false}
           href={`${pathname}/create`}
           className="absolute top-4 right-4 text-green-600 hover:text-green-800 font-bold text-xl"
         >

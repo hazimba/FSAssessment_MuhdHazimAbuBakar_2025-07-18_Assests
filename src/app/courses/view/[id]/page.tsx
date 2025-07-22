@@ -12,6 +12,7 @@ const ViewCourse = () => {
   const [instructor, setInstructor] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!id) return;
     const fetchCourse = async () => {
       try {
         const response = await axios.get(
@@ -27,11 +28,11 @@ const ViewCourse = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
+      if (!courseValue?.instructor_id) return;
       try {
         const response = await axios.get(
           `${process.env.NEXT_PUBLIC_MONGO_DB_API}${apiEndpoints.user.getUser}/${courseValue?.instructor_id}`
         );
-        console.log("User response:", response.data);
         setInstructor(response.data.name);
       } catch (error) {
         console.error("Error fetching user:", error);

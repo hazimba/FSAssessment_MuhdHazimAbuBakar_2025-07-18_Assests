@@ -26,3 +26,22 @@ export const fetchEntities = async <T>({
     console.error("Error fetching courses:", error);
   }
 };
+
+export const fetchEntity = async <T>(
+  id: string,
+  entities: string = "courses"
+): Promise<T | null> => {
+  const endPoint =
+    entities === "courses"
+      ? apiEndpoints.course.getCourse
+      : apiEndpoints.user.getUser;
+  try {
+    const response = await axios.get(
+      `${process.env.NEXT_PUBLIC_MONGO_DB_API}${endPoint}/${id}`
+    );
+    return response.data as T;
+  } catch (error) {
+    console.error(`Error fetching ${entities.slice(0, -1)} by ID:`, error);
+    return null;
+  }
+};

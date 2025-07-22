@@ -5,7 +5,7 @@ import { fetchEntities } from "../services/fetchEntities";
 import { Courses, UserRole, Users } from "@/types";
 
 interface CourseFormProps {
-  initialValues: Courses;
+  initialValues?: Courses | Users;
   onSubmit: (values: Courses) => void;
   loading?: boolean;
 }
@@ -28,7 +28,7 @@ const CourseForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
           }));
         setInstructor(roleInstructor);
       },
-      entities: "users?role=Instructor",
+      entities: "users",
     });
   }, []);
 

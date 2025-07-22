@@ -3,14 +3,14 @@ import { notification } from "antd";
 import UserForm from "../userForm";
 import axios from "axios";
 import apiEndpoints from "@/config/apiEndPoint";
-import { Users } from "@/types";
+import { Courses, Users } from "@/types";
 import { useRouter } from "next/navigation";
 import PageWrapper from "@/components/pageWrapper";
 
 const Create = () => {
   const router = useRouter();
 
-  const handleSubmit = async (values: Users) => {
+  const handleSubmit = async (values: Users | Courses) => {
     try {
       const response = await axios.post(
         process.env.NEXT_PUBLIC_MONGO_DB_API + apiEndpoints.user.createUser,

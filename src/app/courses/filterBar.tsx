@@ -28,11 +28,14 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
           }));
         setInstructor(roleInstructor);
       },
-      entities: "users?role=Instructor",
+      entities: "users",
     });
   }, []);
 
-  const [selectedStatus, setSelectedStatus] = useState<string | undefined>();
+  const [selectedStatus, setSelectedStatus] = useState<string | undefined>(
+    Status.ACTIVE
+  );
+
   const [selectedInstructor, setSelectedInstructor] = useState<
     string | undefined
   >();
@@ -44,11 +47,11 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
   ];
 
   const applyFilters = (
+    data: Courses[],
+    setDataFilter: (data: Courses[]) => void,
     status: string | undefined,
     instructorId: string | undefined,
-    search: string,
-    data: Courses[],
-    setDataFilter: (data: Courses[]) => void
+    search: string
   ) => {
     let filtered = [...data];
 
@@ -67,9 +70,18 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
           course.description.toLowerCase().includes(search)
       );
     }
-
     setDataFilter(filtered);
   };
+
+  useEffect(() => {
+    applyFilters(
+      data,
+      setDataFilter,
+      selectedStatus,
+      selectedInstructor,
+      searchText
+    );
+  }, [selectedStatus, selectedInstructor, searchText, data, setDataFilter]);
 
   return (
     <div className="flex gap-4">
@@ -79,11 +91,11 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
             const value = e.target.value.toLowerCase();
             setSearchText(value);
             applyFilters(
-              selectedStatus,
-              selectedInstructor,
-              value,
               data,
-              setDataFilter
+              setDataFilter,
+              selectedStatus,
+              value,
+              searchText
             );
             setCurrentPage(1);
           }, 300)}
@@ -97,11 +109,11 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
           onChange={(value) => {
             setSelectedInstructor(value);
             applyFilters(
+              data,
+              setDataFilter,
               selectedStatus,
               value,
-              searchText,
-              data,
-              setDataFilter
+              searchText
             );
             setCurrentPage(1);
           }}
@@ -115,14 +127,15 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
           onChange={(value) => {
             setSelectedStatus(value);
             applyFilters(
-              value,
-              selectedInstructor,
-              searchText,
               data,
-              setDataFilter
+              setDataFilter,
+              selectedStatus,
+              value,
+              searchText
             );
             setCurrentPage(1);
           }}
+          defaultValue={Status.ACTIVE}
           allowClear
           placeholder="Status Filter..."
         />

@@ -174,6 +174,7 @@ const ActionButtons = ({
             initialValues={initialValue}
             onSubmit={handleFormSubmit}
             loading={false}
+            isEditMode={true}
           />
         )}
       </Modal>

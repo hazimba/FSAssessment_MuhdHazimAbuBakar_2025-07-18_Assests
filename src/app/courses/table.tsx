@@ -50,7 +50,7 @@ const CoursesTable = ({
           }));
         setInstructor(roleInstructor);
       },
-      entities: "users?role=Instructor",
+      entities: "users",
     });
   }, []);
 

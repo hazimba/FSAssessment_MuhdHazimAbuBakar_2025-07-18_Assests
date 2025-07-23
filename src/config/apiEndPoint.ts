@@ -1,3 +1,4 @@
+// export const apiEndpoints = {
 const apiEndpoints = {
   course: {
     getCourses: "/getCourses",

@@ -20,11 +20,14 @@ export interface Users {
   updatedAt: Date;
   instructors: Users[];
   enrollment: string[];
+  password?: string;
+  email?: string;
 }
 
 export enum UserRole {
   STUDENT = "Student",
   INSTRUCTOR = "Instructor",
+  SUPERADMIN = "SuperAdmin",
 }
 
 export enum Status {

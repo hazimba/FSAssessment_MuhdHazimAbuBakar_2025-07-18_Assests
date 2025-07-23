@@ -2,23 +2,28 @@
 import { Courses, UserRole, Users } from "@/types";
 import { Button, Form, Input, Select, Space } from "antd";
 import { useEffect, useState } from "react";
-import { fetchEntities } from "../services/fetchEntities";
-
-const { Option } = Select;
+import { fetchEntities, fetchEntity } from "../services/fetchEntities";
+import RoleSelectOptions from "@/utils/roleSelectOptions";
 
 interface CourseFormProps {
   initialValues?: Users | Courses;
   onSubmit?: (values: Users | Courses) => void;
   loading?: boolean;
+  isEditMode?: boolean;
 }
 
-const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
+const UserForm = ({
+  initialValues,
+  onSubmit,
+  loading,
+  isEditMode,
+}: CourseFormProps) => {
   const [form] = Form.useForm();
   const role = Form.useWatch("role", form);
-
-  const [courses, setCoruses] = useState<{ value: string; label: string }[]>(
+  const [courses, setCourses] = useState<{ value: string; label: string }[]>(
     []
   );
+  const [users, setRoles] = useState<{ value: string; label: string }[]>([]);
 
   useEffect(() => {
     fetchEntities<Courses>({
@@ -27,9 +32,24 @@ const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
           value: u._id,
           label: u.title,
         }));
-        setCoruses(roleInstructor);
+        setCourses(roleInstructor);
       },
       entities: "courses",
+    });
+  }, []);
+
+  useEffect(() => {
+    fetchEntities<Users>({
+      setfetchEntities: (data: Users[]) => {
+        const users = data
+          .filter((i) => UserRole.INSTRUCTOR === i.role)
+          .map((u) => ({
+            value: u._id,
+            label: u.name,
+          }));
+        setRoles(users);
+      },
+      entities: "users",
     });
   }, []);
 
@@ -39,47 +59,59 @@ const UserForm = ({ initialValues, onSubmit, loading }: CourseFormProps) => {
     }
   }, [initialValues, form]);
 
+  useEffect(() => {
+    if (role === UserRole.STUDENT && !isEditMode) {
+      form.setFieldsValue({ identification: null, name: null });
+    }
+  }, [role, form, isEditMode]);
+
   return (
-    <Form
-      form={form}
-      name="course-form"
-      onFinish={onSubmit}
-      style={{ width: "400px" }}
-      layout="vertical"
-    >
+    <Form form={form} name="course-form" onFinish={onSubmit} layout="vertical">
       <Form.Item name="_id" hidden>
         <Input type="hidden" />
       </Form.Item>
+      <RoleSelectOptions isEditMode={isEditMode} />
 
-      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-        <Input placeholder="Enter name..." />
-      </Form.Item>
+      {role === UserRole.INSTRUCTOR && !isEditMode ? (
+        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Select
+            placeholder="Select instructors..."
+            options={users}
+            onChange={async (id) => {
+              const selected = await fetchEntity<Users>(id, "users");
+              if (selected) {
+                form.setFieldsValue({
+                  _id: selected._id,
+                  identification: selected.identification,
+                  email: selected.email,
+                  name: selected.name,
+                });
+              }
+            }}
+          />
+        </Form.Item>
+      ) : (
+        <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+          <Input placeholder="Enter name..." />
+        </Form.Item>
+      )}
+
+      {role !== UserRole.STUDENT ? (
+        <Form.Item name="email" label="Email">
+          <Input disabled={isEditMode} placeholder="Enter email..." />
+        </Form.Item>
+      ) : null}
 
       <Form.Item name="identification" label="Identification">
         <Input placeholder="Enter identification..." />
       </Form.Item>
 
-      <Form.Item name="role" label="Role">
-        <Select
-          placeholder="Select role..."
-          onChange={(e) => console.log(e)}
-          //   onClick={(e) => console.log(e)}
-        >
-          {Object.values(UserRole).map((role) => (
-            <Option key={role} value={role}>
-              {role}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
-
-      {role === "Student" && (
+      {role === UserRole.STUDENT && (
         <Form.Item name="enrollment" label="Enrollment">
           <Select
             mode="multiple"
             placeholder="Select courses..."
             options={courses}
-            style={{ width: "400px" }}
           />
         </Form.Item>
       )}

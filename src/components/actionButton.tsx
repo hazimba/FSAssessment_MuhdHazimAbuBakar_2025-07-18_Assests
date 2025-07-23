@@ -2,11 +2,12 @@
 import CourseForm from "@/app/courses/courseForm";
 import UserForm from "@/app/users/userForm";
 import apiEndpoints from "@/config/apiEndPoint";
-import { Courses, Status, Users } from "@/types";
+import { Courses, Status, UserRole, Users } from "@/types";
 import { Button, Modal, notification, Popconfirm } from "antd";
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useUserLoggedInState } from "@/store/userLogin";
 
 interface ActionButtonsProps {
   record: Courses | Users;
@@ -22,7 +23,7 @@ const ActionButtons = ({
   const pathname = usePathname();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const name = pathname === "/courses" ? "course" : "user";
-
+  const role = useUserLoggedInState((state) => state.role);
   const page = pathname.includes("/courses");
 
   const handleDelete = async (id: string) => {
@@ -174,29 +175,32 @@ const ActionButtons = ({
             initialValues={initialValue}
             onSubmit={handleFormSubmit}
             loading={false}
+            isEditMode={true}
           />
         )}
       </Modal>
-      <Popconfirm
-        title={`Are you sure you want to ${
-          record.status === Status.ACTIVE ? "delete" : "undelete"
-        } this ${name}?`}
-        onConfirm={(e) => {
-          e?.stopPropagation();
-          if (record._id && record.status === Status.ACTIVE) {
-            handleDelete(record._id);
-          } else if (record._id && record.status === "Inactive") {
-            handleUndelete(record._id);
-          }
-        }}
-        trigger={"click"}
-        okText="Yes"
-        cancelText="No"
-      >
-        <Button color="default" danger variant="link">
-          {record.status === Status.ACTIVE ? "Delete" : "Undelete"}
-        </Button>
-      </Popconfirm>
+      {role === UserRole.SUPERADMIN && (
+        <Popconfirm
+          title={`Are you sure you want to ${
+            record.status === Status.ACTIVE ? "delete" : "undelete"
+          } this ${name}?`}
+          onConfirm={(e) => {
+            e?.stopPropagation();
+            if (record._id && record.status === Status.ACTIVE) {
+              handleDelete(record._id);
+            } else if (record._id && record.status === "Inactive") {
+              handleUndelete(record._id);
+            }
+          }}
+          trigger={"click"}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button color="default" danger variant="link">
+            {record.status === Status.ACTIVE ? "Delete" : "Undelete"}
+          </Button>
+        </Popconfirm>
+      )}
     </div>
   );
 };

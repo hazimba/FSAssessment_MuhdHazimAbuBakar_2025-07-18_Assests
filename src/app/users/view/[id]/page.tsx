@@ -13,6 +13,7 @@ const ViewUser = () => {
   const [coursesValue, setCoursesValue] = useState<Courses[]>([]);
 
   useEffect(() => {
+    if (!id) return;
     const fetchCourses = async () => {
       try {
         const response = await axios.get(

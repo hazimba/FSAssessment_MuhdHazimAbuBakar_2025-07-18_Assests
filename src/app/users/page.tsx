@@ -2,11 +2,13 @@
 import PageWrapper from "@/components/pageWrapper";
 import { useEffect, useMemo, useState } from "react";
 import { fetchEntities } from "../services/fetchEntities";
-import { Status, type Courses, type Users } from "@/types";
+import { Status, UserRole, type Courses, type Users } from "@/types";
 import { Table, Tag } from "antd";
 import ActionButtons from "@/components/actionButton";
+import { useRouter } from "next/navigation";
 
 const Users = () => {
+  const router = useRouter();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setfetchEntities] = useState<Users[]>([]);
   const [courses, setCourses] = useState<Courses[]>([]);
@@ -24,7 +26,13 @@ const Users = () => {
   const onSuccess = () => {
     fetchEntities<Users>({
       setfetchEntities,
-      setDataFilter,
+      setDataFilter: (data: Users[]) => {
+        const excludeSuperAdmin = data.filter(
+          (user) => user.role !== UserRole.SUPERADMIN
+        );
+        setfetchEntities(excludeSuperAdmin);
+        setDataFilter(excludeSuperAdmin);
+      },
       entities: "users",
     });
   };
@@ -36,7 +44,13 @@ const Users = () => {
   useEffect(() => {
     fetchEntities<Users>({
       setfetchEntities: setfetchEntities,
-      setDataFilter,
+      setDataFilter: (data: Users[]) => {
+        const excludeSuperAdmin = data.filter(
+          (user) => user.role !== UserRole.SUPERADMIN
+        );
+        setfetchEntities(excludeSuperAdmin);
+        setDataFilter(excludeSuperAdmin);
+      },
       entities: "users",
     });
   }, []);
@@ -96,11 +110,11 @@ const Users = () => {
       <Table
         rowKey="_id"
         bordered
-        className="w-full min-h-[400px]"
+        className="w-full"
         tableLayout="fixed"
         scroll={{
           x: "max-content",
-          y: 400,
+          y: 300,
         }}
         size="middle"
         pagination={{
@@ -121,7 +135,7 @@ const Users = () => {
         }
         onRow={(record) => ({
           onClick: () => {
-            window.location.href = `/users/view/${record._id}`;
+            router.push(`/users/view/${record._id}`);
           },
         })}
         expandable={{

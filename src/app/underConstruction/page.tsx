@@ -1,6 +1,5 @@
 import UnderConstruction from "@/components/underConstruction";
 
-const create = () => {
+export default function UnderConstructionPage() {
   return <UnderConstruction />;
-};
-export default create;
+}

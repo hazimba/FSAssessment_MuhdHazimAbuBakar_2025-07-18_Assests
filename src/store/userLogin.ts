@@ -8,11 +8,6 @@ interface UserLoggedInState {
   setLoggedInUser: (user: string | null) => void;
 }
 
-// export const useUserLoggedInState = create<UserLoginState>((set) => ({
-//   user: null,
-//   setRole: (user) => set({ user }),
-// }));
-
 export const useUserLoggedInState = create<UserLoggedInState>()(
   persist(
     (set) => ({

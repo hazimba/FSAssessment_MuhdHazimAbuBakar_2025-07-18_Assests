@@ -64,10 +64,8 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
     }
 
     if (search) {
-      filtered = filtered.filter(
-        (course) =>
-          course.title.toLowerCase().includes(search) ||
-          course.description.toLowerCase().includes(search)
+      filtered = filtered.filter((course) =>
+        course.title.toLowerCase().includes(search)
       );
     }
     setDataFilter(filtered);
@@ -84,62 +82,38 @@ const FilterBar = ({ data, setDataFilter, setCurrentPage }: FilterBarProps) => {
   }, [selectedStatus, selectedInstructor, searchText, data, setDataFilter]);
 
   return (
-    <div className="flex gap-4">
-      <div className="flex gap-4 mb-4">
-        <Input.Search
-          onChange={debounce((e) => {
-            const value = e.target.value.toLowerCase();
-            setSearchText(value);
-            applyFilters(
-              data,
-              setDataFilter,
-              selectedStatus,
-              value,
-              searchText
-            );
-            setCurrentPage(1);
-          }, 300)}
-          prefix={<SearchOutlined />}
-          placeholder="Title Filter..."
-        />
-      </div>
-      <div className="flex gap-4 mb-4">
-        <Select
-          options={instructorOptions}
-          onChange={(value) => {
-            setSelectedInstructor(value);
-            applyFilters(
-              data,
-              setDataFilter,
-              selectedStatus,
-              value,
-              searchText
-            );
-            setCurrentPage(1);
-          }}
-          allowClear
-          placeholder="Instructor Filter..."
-        />
-      </div>
-      <div className="flex gap-4 mb-4">
-        <Select
-          options={statusOptions}
-          onChange={(value) => {
-            setSelectedStatus(value);
-            applyFilters(
-              data,
-              setDataFilter,
-              selectedStatus,
-              value,
-              searchText
-            );
-            setCurrentPage(1);
-          }}
-          defaultValue={Status.ACTIVE}
-          allowClear
-          placeholder="Status Filter..."
-        />
-      </div>
+    <div className="flex flex-col md:flex-row gap-4 mb-4">
+      <Input.Search
+        onChange={debounce((e) => {
+          const value = e.target.value.toLowerCase();
+          setSearchText(value);
+          applyFilters(data, setDataFilter, selectedStatus, value, searchText);
+          setCurrentPage(1);
+        }, 300)}
+        prefix={<SearchOutlined />}
+        placeholder="Title Filter..."
+      />
+      <Select
+        options={instructorOptions}
+        onChange={(value) => {
+          setSelectedInstructor(value);
+          applyFilters(data, setDataFilter, selectedStatus, value, searchText);
+          setCurrentPage(1);
+        }}
+        allowClear
+        placeholder="Instructor Filter..."
+      />
+      <Select
+        options={statusOptions}
+        onChange={(value) => {
+          setSelectedStatus(value);
+          applyFilters(data, setDataFilter, selectedStatus, value, searchText);
+          setCurrentPage(1);
+        }}
+        defaultValue={Status.ACTIVE}
+        allowClear
+        placeholder="Status Filter..."
+      />
     </div>
   );
 };

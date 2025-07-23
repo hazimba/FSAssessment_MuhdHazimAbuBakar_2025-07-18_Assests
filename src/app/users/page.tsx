@@ -26,7 +26,13 @@ const Users = () => {
   const onSuccess = () => {
     fetchEntities<Users>({
       setfetchEntities,
-      setDataFilter,
+      setDataFilter: (data: Users[]) => {
+        const excludeSuperAdmin = data.filter(
+          (user) => user.role !== UserRole.SUPERADMIN
+        );
+        setfetchEntities(excludeSuperAdmin);
+        setDataFilter(excludeSuperAdmin);
+      },
       entities: "users",
     });
   };
@@ -42,7 +48,6 @@ const Users = () => {
         const excludeSuperAdmin = data.filter(
           (user) => user.role !== UserRole.SUPERADMIN
         );
-        console.log("excludeSuperAdmin", excludeSuperAdmin);
         setfetchEntities(excludeSuperAdmin);
         setDataFilter(excludeSuperAdmin);
       },
@@ -105,11 +110,11 @@ const Users = () => {
       <Table
         rowKey="_id"
         bordered
-        className="w-full min-h-[400px]"
+        className="w-full"
         tableLayout="fixed"
         scroll={{
           x: "max-content",
-          y: 400,
+          y: 300,
         }}
         size="middle"
         pagination={{

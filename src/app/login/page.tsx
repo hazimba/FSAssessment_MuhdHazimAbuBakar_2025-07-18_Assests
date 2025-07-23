@@ -1,10 +1,11 @@
 "use client";
+import { useUserLoggedInState } from "@/store/userLogin";
 import { Users } from "@/types";
-import { Button, Form, Input, notification } from "antd";
+import { Button, Card, Form, Input, notification } from "antd";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useUserLoggedInState } from "@/store/userLogin";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -40,27 +41,51 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
-      <Form layout="vertical" onFinish={onFinish}>
-        <Form.Item name="email" label="Email" rules={[{ required: true }]}>
-          <Input />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true }]}
-        >
-          <Input.Password />
-        </Form.Item>
-        <Form.Item>
-          <Button htmlType="submit" loading={loading}>
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
-      <div className="text-center mt-4">
-        <p>app@superAdmin.com / app123</p>
-        <p>app@instructor.com / app123</p>
+    <div className="flex h-screen">
+      <div className="w-2/3 flex items-center justify-center">
+        <div className="text-center mt-4 text-sm text-gray-500 opacity-20">
+          <p>app@superAdmin.com / app123</p>
+          <p>app@instructor.com / app123</p>
+        </div>
+      </div>
+      <div className="w-1/3 flex items-center justify-center bg-gray-100">
+        <Card className="w-96 p-6 shadow-lg">
+          <div className="text-center mb-8 text-2xl font-bold">
+            Log in to continue
+          </div>
+          <Form layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              name="email"
+              label="Email"
+              rules={[{ required: true, message: "Please input your email!" }]}
+            >
+              <Input placeholder="Enter Email..." />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              label="Password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password placeholder="Enter Password..." />
+            </Form.Item>
+            <div className="w-full text-end mb-3 text-[11px]">
+              Dont have an account? Contact our <Link href="/admin">admin</Link>
+            </div>
+            <Form.Item>
+              <Button
+                htmlType="submit"
+                color="primary"
+                variant="solid"
+                loading={loading}
+                block
+              >
+                Login
+              </Button>
+            </Form.Item>
+          </Form>
+        </Card>
       </div>
     </div>
   );

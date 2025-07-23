@@ -74,7 +74,7 @@ const AdminPage = () => {
       <div className="flex h-screen bg-gray-100">
         <div className="flex flex-col items-center justify-center w-screen min-h-screen">
           This is the Admin Page
-          <div className="flex gap-12 justify-around mt-4">
+          <div className="flex gap-12 md:flex-none justify-around mt-4">
             <Table
               title={() => "List of Instructor"}
               columns={column}

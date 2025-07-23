@@ -134,11 +134,11 @@ const CoursesTable = ({
     <Table
       rowKey="_id"
       bordered
-      className="w-full min-h-[400px]"
+      className="w-full"
       tableLayout="fixed"
       scroll={{
         x: "max-content",
-        y: 400,
+        y: 250,
       }}
       size="middle"
       pagination={{

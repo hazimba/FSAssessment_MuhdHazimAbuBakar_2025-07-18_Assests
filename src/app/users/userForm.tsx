@@ -66,13 +66,7 @@ const UserForm = ({
   }, [role, form, isEditMode]);
 
   return (
-    <Form
-      form={form}
-      name="course-form"
-      onFinish={onSubmit}
-      style={{ width: "400px" }}
-      layout="vertical"
-    >
+    <Form form={form} name="course-form" onFinish={onSubmit} layout="vertical">
       <Form.Item name="_id" hidden>
         <Input type="hidden" />
       </Form.Item>
@@ -83,14 +77,14 @@ const UserForm = ({
           <Select
             placeholder="Select instructors..."
             options={users}
-            style={{ width: "400px" }}
-            onChange={async (value) => {
-              const selected = await fetchEntity<Users>(value, "users");
-
+            onChange={async (id) => {
+              const selected = await fetchEntity<Users>(id, "users");
               if (selected) {
                 form.setFieldsValue({
+                  _id: selected._id,
                   identification: selected.identification,
                   email: selected.email,
+                  name: selected.name,
                 });
               }
             }}
@@ -118,7 +112,6 @@ const UserForm = ({
             mode="multiple"
             placeholder="Select courses..."
             options={courses}
-            style={{ width: "400px" }}
           />
         </Form.Item>
       )}
